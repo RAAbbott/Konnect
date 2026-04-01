@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 import { oauth } from "@/lib/env";
+
+/** OAuth start can be slow on cold starts; allow room on Vercel (plan limits apply). */
+export const maxDuration = 60;
 import type { OAuthProvider } from "@/lib/env";
 import { providerConfig, redirectUri } from "@/lib/oauth/providers";
 import { signOAuthState } from "@/lib/oauth/state";

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import type { OAuthProvider } from "@/lib/env";
+
+export const maxDuration = 60;
 import { upsertConnection } from "@/lib/db/connections";
 import { exchangeCode } from "@/lib/oauth/exchange";
 import { verifyOAuthState } from "@/lib/oauth/state";

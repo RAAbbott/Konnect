@@ -3,6 +3,8 @@ import { buildSnapshot } from "@/lib/aggregate";
 
 export const runtime = "nodejs";
 
+export const maxDuration = 60;
+
 export async function GET() {
   try {
     const snapshot = await buildSnapshot();
