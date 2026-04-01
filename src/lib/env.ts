@@ -1,5 +1,22 @@
+/**
+ * Canonical public URL for OAuth redirects and absolute links.
+ * - Prefer `APP_URL` when set (production or explicit preview URL).
+ * - On Vercel, `VERCEL_URL` is set per deployment (e.g. `*.vercel.app`); use it when
+ *   `APP_URL` is unset so preview deployments get correct OAuth redirects without
+ *   manual env per branch. For a single staging hostname, set `APP_URL` in Vercel
+ *   to that URL instead.
+ */
 export function getAppUrl(): string {
-  return process.env.APP_URL ?? "http://localhost:3000";
+  const explicit = process.env.APP_URL?.trim();
+  if (explicit) {
+    return explicit.replace(/\/$/, "");
+  }
+  const vercel = process.env.VERCEL_URL?.trim();
+  if (vercel) {
+    const host = vercel.replace(/^https?:\/\//, "");
+    return `https://${host}`;
+  }
+  return "http://localhost:3000";
 }
 
 export function getEncryptionKey(): string | undefined {

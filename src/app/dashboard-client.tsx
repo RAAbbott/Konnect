@@ -49,12 +49,12 @@ export function DashboardClient() {
       <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-500">
         Data &amp; AI
       </h2>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <button
           type="button"
           onClick={loadSnapshot}
           disabled={loading !== null}
-          className="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-sm font-medium hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800"
+          className="min-h-11 w-full rounded-md border border-zinc-300 bg-white px-4 text-sm font-medium hover:bg-zinc-50 active:bg-zinc-100 disabled:opacity-50 sm:min-h-0 sm:w-auto sm:px-3 sm:py-1.5 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:active:bg-zinc-800"
         >
           {loading === "snap" ? "Loading…" : "Fetch snapshot (JSON)"}
         </button>
@@ -62,7 +62,7 @@ export function DashboardClient() {
           type="button"
           onClick={loadReport}
           disabled={loading !== null}
-          className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
+          className="min-h-11 w-full rounded-md bg-zinc-900 px-4 text-sm font-medium text-white active:bg-zinc-800 disabled:opacity-50 sm:min-h-0 sm:w-auto sm:px-3 sm:py-1.5 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white dark:active:bg-zinc-200"
         >
           {loading === "ai" ? "Generating…" : "Generate AI briefing"}
         </button>
@@ -78,7 +78,7 @@ export function DashboardClient() {
         </div>
       )}
       {snapshotJson && (
-        <pre className="max-h-[480px] overflow-auto rounded-lg border border-zinc-200 bg-zinc-100 p-4 text-xs dark:border-zinc-800 dark:bg-zinc-950">
+        <pre className="max-h-[min(70dvh,480px)] overflow-auto overscroll-contain rounded-lg border border-zinc-200 bg-zinc-100 p-3 text-xs sm:p-4 dark:border-zinc-800 dark:bg-zinc-950">
           {snapshotJson}
         </pre>
       )}

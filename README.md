@@ -64,3 +64,24 @@ The MVP focuses on OAuth, token storage, and read-only pulls—not a polished UI
 - **Notion** searches recently edited pages the integration can access.
 
 Tokens are stored in Postgres in plaintext in this MVP; encrypt at rest or use a vault before production.
+
+## App Router vs Pages Router
+
+Staying on the **App Router** is recommended. Moving to the **Pages Router** would be a **medium-sized refactor**, not a rewrite: you would recreate the same routes under `pages/api/*` and `pages/index.tsx`, replace `layout.tsx` with `_app` / `_document`, and adjust any App Router–specific APIs. Effort scales with how much you rely on App-only features (loading UI, nested layouts, React Server Components patterns). For this codebase, the API handlers and connector logic stay the same; mostly **file moves and import path updates**. Unless you have a strong reason to use Pages, **App Router is the better default** for new Next work.
+
+## Deploying on Vercel (previews + staging DB)
+
+**Preview deployments** get a stable URL per branch/PR (`VERCEL_URL`). This app uses `getAppUrl()` so **if `APP_URL` is unset**, OAuth redirect URIs use `https://<VERCEL_URL>` automatically—**each preview can OAuth against its own hostname** without listing every preview URL in provider consoles (you still register the **wildcard** patterns providers allow, e.g. `https://*.vercel.app/...` where supported).
+
+**Single staging database for all previews** (what you asked for): point **every** Vercel environment (Preview + Production if you want) at **one** `DATABASE_URL` (e.g. [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres), [Neon](https://neon.tech), or [Supabase](https://supabase.com) Postgres). Set **`APP_SECRET` to the same value** everywhere so OAuth state verification works. Optionally set **`APP_URL`** to a **fixed staging hostname** (e.g. `https://konnect-staging.vercel.app`) if you want **one** redirect URL registered with Slack/Google/etc., and use that deployment for integration testing; previews would then need that same `APP_URL` if they share the DB—or accept that per-preview `VERCEL_URL` is used when `APP_URL` is unset (separate redirect URIs per preview).
+
+**Practical MVP setup**
+
+1. Create one Postgres instance; add `DATABASE_URL` to Vercel **Environment Variables** for Preview (and Production as needed).
+2. Run **`npm run db:push`** once against that database from your machine (or add a migration step to CI) so the `connections` table exists.
+3. Set **`APP_SECRET`**, **`OPENAI_API_KEY`**, and OAuth client IDs/secrets in Vercel (Preview at minimum).
+4. In each OAuth provider, register redirect URLs. Either:
+   - **Wildcard / multiple URLs**: e.g. `https://*.vercel.app/api/oauth/google/callback` if the provider supports it, or add your staging + production URLs explicitly; or  
+   - **Per-preview OAuth**: rely on **`APP_URL` unset** so each preview uses its own `VERCEL_URL` and add patterns as your provider allows.
+
+**Mobile:** the UI uses responsive spacing, full-width tap targets on small screens, `min-h-dvh`, and safe-area padding for notched phones. Test previews on a real device from the Vercel preview URL.

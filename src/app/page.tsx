@@ -47,8 +47,8 @@ export default async function Home({
   const connected = new Set(connections.map((c) => c.provider));
 
   return (
-    <div className="min-h-full bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
-      <main className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-12">
+    <div className="min-h-dvh bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+      <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-8 sm:gap-8 sm:px-6 sm:py-12">
         {sp.oauth_error && (
           <div
             className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 dark:border-red-900 dark:bg-red-950/40 dark:text-red-100"
@@ -69,7 +69,7 @@ export default async function Home({
           <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
             Konnect
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-balance text-xl font-semibold tracking-tight sm:text-2xl">
             Your home base for Slack, Linear, Gmail, Todoist, and Notion
           </h1>
           <p className="text-zinc-600 dark:text-zinc-400">
@@ -114,13 +114,13 @@ export default async function Home({
               return (
                 <li
                   key={p.id}
-                  className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-2"
                 >
-                  <div>
+                  <div className="min-w-0">
                     <div className="font-medium">{p.name}</div>
-                    <div className="text-sm text-zinc-500">{p.desc}</div>
+                    <div className="text-pretty text-sm text-zinc-500">{p.desc}</div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
                     <span
                       className={
                         ok
@@ -133,7 +133,7 @@ export default async function Home({
                     {!dbError && (
                       <Link
                         href={`/api/oauth/${p.id}`}
-                        className="inline-flex rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
+                        className="inline-flex min-h-11 items-center justify-center rounded-md bg-zinc-900 px-4 text-sm font-medium text-white active:bg-zinc-800 sm:min-h-0 sm:px-3 sm:py-1.5 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white dark:active:bg-zinc-200"
                       >
                         {ok ? "Reconnect" : "Connect"}
                       </Link>
