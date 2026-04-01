@@ -1,0 +1,87 @@
+"use client";
+
+import { useCallback, useState } from "react";
+
+export function DashboardClient() {
+  const [snapshotJson, setSnapshotJson] = useState<string | null>(null);
+  const [report, setReport] = useState<string | null>(null);
+  const [loading, setLoading] = useState<"snap" | "ai" | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+
+  const loadSnapshot = useCallback(async () => {
+    setErr(null);
+    setLoading("snap");
+    try {
+      const res = await fetch("/api/snapshot");
+      const data = await res.json();
+      if (!res.ok) {
+        setErr(data.error ?? "Request failed");
+        return;
+      }
+      setSnapshotJson(JSON.stringify(data, null, 2));
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Failed");
+    } finally {
+      setLoading(null);
+    }
+  }, []);
+
+  const loadReport = useCallback(async () => {
+    setErr(null);
+    setLoading("ai");
+    try {
+      const res = await fetch("/api/ai/report", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        setErr(data.error ?? "Request failed");
+        return;
+      }
+      setReport(data.report ?? "");
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Failed");
+    } finally {
+      setLoading(null);
+    }
+  }, []);
+
+  return (
+    <section className="space-y-4">
+      <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-500">
+        Data &amp; AI
+      </h2>
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={loadSnapshot}
+          disabled={loading !== null}
+          className="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-sm font-medium hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800"
+        >
+          {loading === "snap" ? "Loading…" : "Fetch snapshot (JSON)"}
+        </button>
+        <button
+          type="button"
+          onClick={loadReport}
+          disabled={loading !== null}
+          className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
+        >
+          {loading === "ai" ? "Generating…" : "Generate AI briefing"}
+        </button>
+      </div>
+      {err && (
+        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+          {err}
+        </p>
+      )}
+      {report && (
+        <div className="rounded-lg border border-zinc-200 bg-white p-4 text-sm leading-relaxed whitespace-pre-wrap dark:border-zinc-800 dark:bg-zinc-900">
+          {report}
+        </div>
+      )}
+      {snapshotJson && (
+        <pre className="max-h-[480px] overflow-auto rounded-lg border border-zinc-200 bg-zinc-100 p-4 text-xs dark:border-zinc-800 dark:bg-zinc-950">
+          {snapshotJson}
+        </pre>
+      )}
+    </section>
+  );
+}

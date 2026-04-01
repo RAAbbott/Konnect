@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: konnect
+      POSTGRES_PASSWORD: konnect
+      POSTGRES_DB: konnect
+    ports:
+      - "5432:5432"
+    volumes:
+      - konnect_pg:/var/lib/postgresql/data
+
+volumes:
+  konnect_pg:
